@@ -8,22 +8,26 @@ char** Parse(char* src, char separator, int* length) {
   *length = 1;
   char** dst = calloc(*length, charp);
   *dst = src;
+  int f = 0;
   while (*src) {
     if (*src == separator) {
+      f = 1;
       dst = realloc(dst, charp * (*length + 1));
       *(dst + *length) = src + 1;
       (*length)++;
     }
     src++;
   }
+  if (f)
+    (*length)--;
   return dst;
 }
 
 // массив указателей на подстроки, его длина, № подстроки (которую нужно извлечь)
 char* Cut(char** src, int length, int id) {
   int ss_length;
-  if (id < length)
-    ss_length = src[id + 1] - src[id] - 1;
+  if ((id < length) && (id != 0))
+    ss_length = src[id + 1] - src[id];
   else
     ss_length = strlen(src[id]);
   char* dst = calloc(ss_length, sizeof(char));
@@ -50,7 +54,7 @@ char Estoc(char* src) {
 }
 
 int main() {
-  char* example = "$GPGSA,A,3,10,13,14,15,,,,,,,,,6.0,2.4,5.5,1*2D\r\n$GPVTG,0.00,T,,M,0.81,N,1.50,K,A*30\r\n";
+  char* example = "$GPGSA,A,3,10,13,14,15,,,,,,,,,6.0,2.4,5.5,1*2D\r\n$GPVTG,0.00,T,,M,0.81,N,1.50,K,A*30\r\n_~\r\n";
 
   // парсим строку по \n
   int length_0;
@@ -80,6 +84,15 @@ int main() {
   // получаем из 1-й подстроки 5-й элемент в числовом типе float
   printf("(double) %f\n", Eatof(Cut(parse_2, length_2, 5)));
 
+  // ---
+
+  // парсим 2-ю строку по ,
+  int length_3;
+  char** parse_3 = Parse(Cut(parse_0, length_0, 2), ',', &length_3);
+
+  // получаем из 2-й подстроки 0-й элемент в char*
+  printf("(char*) %s\n", Cut(parse_3, length_3, 0));
+
   // очищаем память от парсинга строки
   free(parse_0);
 
@@ -88,6 +101,9 @@ int main() {
 
   // очищаем память от парсинга 1-й подстроки
   free(parse_2);
+
+  // очищаем память от парсинга 2-й подстроки
+  free(parse_3);
 
   return 0;
 }
