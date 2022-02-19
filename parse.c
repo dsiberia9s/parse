@@ -8,7 +8,7 @@ char** Parse(char* src, char separator, int* length) {
   *length = 1;
   char** dst = calloc(*length, charp);
   *dst = src;
-  int f = 0;
+  char f = 0;
   while (*src) {
     if (*src == separator) {
       f = 1;
