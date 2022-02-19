@@ -5,15 +5,16 @@
 // исходная строка, разделительный символ, переменная (в которую будет записана длина массива)
 char** Parse(char* src, char separator, int* length) {
   size_t charp = sizeof(char*);
-  (*length) = 1;
-  char** dst = calloc((*length), charp);
+  *length = 1;
+  char** dst = calloc(*length, charp);
   dst[0] = &src[0];
-  for (int i = 0; i < strlen(src); i++) {
-    if (src[i] == separator) {
+  while (*src) {
+    if (*src == separator) {
       dst = realloc(dst, charp * (*length + 1));
-      dst[(*length)] = &src[i + 1];
+      dst[*length] = src + 1;
       (*length)++;
     }
+    *src++;
   }
   return dst;
 }
