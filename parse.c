@@ -7,14 +7,14 @@ char** Parse(char* src, char separator, int* length) {
   size_t charp = sizeof(char*);
   *length = 1;
   char** dst = calloc(*length, charp);
-  dst[0] = &src[0];
+  *dst = src;
   while (*src) {
     if (*src == separator) {
       dst = realloc(dst, charp * (*length + 1));
-      dst[*length] = src + 1;
+      *(dst + *length) = src + 1;
       (*length)++;
     }
-    *src++;
+    src++;
   }
   return dst;
 }
